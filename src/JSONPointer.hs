@@ -5,10 +5,10 @@
 module JSONPointer where
 
 import           Control.Monad       (when)
-import           Data.Aeson
+import           Data.Aeson          hiding (Key)
+import qualified Data.Aeson.Key      as Aeson.Key
+import qualified Data.Aeson.KeyMap   as Aeson.KeyMap
 import qualified Data.Hashable       as HA
-import qualified Data.HashMap.Strict as HM
-import           Data.Semigroup      (Semigroup)
 import           Data.Text           (Text)
 import qualified Data.Text           as T
 import qualified Data.Vector         as V
@@ -163,7 +163,7 @@ resolveToken tok (Array vs) =
                 Nothing  -> Left ArrayElemNotFound
                 Just res -> Right res
 resolveToken tok (Object h) =
-    case HM.lookup (_unToken tok) h of
+    case Aeson.KeyMap.lookup (Aeson.Key.fromText (_unToken tok)) h of
         Nothing  -> Left ObjectLookupFailed
         Just res -> Right res
 resolveToken _ _ = Left ExpectedObjectOrArray
